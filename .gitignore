@@ -7,3 +7,6 @@ deps
 
 #Python virtual enviroment
 .venv/
+
+#vscode enviroment
+.vscode/

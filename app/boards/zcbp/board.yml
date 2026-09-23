@@ -1,0 +1,6 @@
+board:
+  name: zcbp
+  full_name: Zephyr Course Black Pill V3.0
+  vendor: weact
+  socs:
+    - name: stm32f401xe

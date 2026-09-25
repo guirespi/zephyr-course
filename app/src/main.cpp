@@ -1,4 +1,5 @@
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/sensor.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -11,8 +12,18 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
+namespace {
+    void test() {
+        const struct device * driver = DEVICE_DT_GET(DT_NODELABEL(gr_sensor0));
+        struct sensor_value val;
+        auto ret = sensor_channel_get(driver, SENSOR_CHAN_AMBIENT_TEMP, &val);
+        LOG_INF("Channel ret %d", ret);
+    }
+}
+
 int main(void)
 {
+    test();
     bool led_state = true;
 
     if (!gpio_is_ready_dt(&led)) return 0;

@@ -70,3 +70,4 @@ if LED_SUBSYSTEM
 endif #LED_SUBSYSTEM
 
 source "Kconfig.zephyr"
+rsource "drivers/gr_sensor/Kconfig"

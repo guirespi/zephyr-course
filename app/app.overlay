@@ -2,4 +2,9 @@
 	aliases {
 		app-led = &user_led;
 	};
+
+	gr_sensor0: gr_sensor {
+		compatible = "gr,sensor";
+		status = "okay";
+	};
 };

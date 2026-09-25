@@ -3,6 +3,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include "gr_sensor.h"
+
 #ifndef CONFIG_GR_SENSOR
 /* The devicetree node identifier for the "user_led" alias. Modified by app.overlay */
 #define LED_NODE DT_ALIAS(app_led)
@@ -33,6 +35,7 @@ int main(void)
     }
 #else
     bool state = true;
+    uint32_t counter = 1;
     while (1) {
         struct sensor_value val;
         if(state) {
@@ -40,6 +43,7 @@ int main(void)
         } else {
             auto ret = sensor_sample_fetch(gr_sensor);
         }
+        gr_sensor_set_amp(gr_sensor, counter++);
         state = !state;
         k_msleep(CONFIG_APP_HEARTBEAT_PERIOD_MS);
     }

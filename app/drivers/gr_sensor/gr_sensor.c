@@ -4,6 +4,10 @@
 
 #define DT_DRV_COMPAT gr_sensor
 
+typedef struct {
+    uint32_t amp;
+} gr_sensor_data_t;
+
 LOG_MODULE_REGISTER(gr_sensor, LOG_LEVEL_INF);
 
 /* The devicetree node identifier for the "user_led" alias. Modified by app.overlay */
@@ -12,6 +16,12 @@ LOG_MODULE_REGISTER(gr_sensor, LOG_LEVEL_INF);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
 
 static bool led_state = true;
+static gr_sensor_data_t gr_sensor_data; 
+
+void gr_sensor_set_amp(const struct device *dev, uint32_t amp) {
+    gr_sensor_data_t * data = (gr_sensor_data_t *) dev->data;
+    data->amp = amp;
+}
 
 int sample_fetch_gr_sensor(const struct device *dev, enum sensor_channel chan) 
 {
@@ -29,7 +39,7 @@ int channel_get_gr_sensor(const struct device *dev,
 				    struct sensor_value *val) 
 {
     
-    LOG_INF("Channel Get reached, channel %d", chan);
+    LOG_INF("Channel Get reached, channel %d, amp %d", chan, ((gr_sensor_data_t *)dev->data)->amp);
     
     if (gpio_pin_set_dt(&led, 0) != 0) return 0;
     led_state = false;
@@ -53,4 +63,4 @@ static int init_gr_sensor(const struct device *dev) {
     return 0;
 }
 
-DEVICE_DT_INST_DEFINE(0, init_gr_sensor, NULL, NULL, NULL, POST_KERNEL, 80, &api_gr_sensor);
+DEVICE_DT_INST_DEFINE(0, init_gr_sensor, NULL, &gr_sensor_data, NULL, POST_KERNEL, 80, &api_gr_sensor);

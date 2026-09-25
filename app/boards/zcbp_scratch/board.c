@@ -6,3 +6,5 @@ static int board_zcbp_scratch_init(void) {
     printk("Board Initialized - ZCBP from scratch\n");
     return 0;
 }
+
+SYS_INIT(board_zcbp_scratch_init, PRE_KERNEL_1, 0);

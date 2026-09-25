@@ -3,27 +3,21 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#define SLEEP_TIME_MS 1000
-
+#ifndef CONFIG_GR_SENSOR
 /* The devicetree node identifier for the "user_led" alias. Modified by app.overlay */
 #define LED_NODE DT_ALIAS(app_led)
-
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
+#endif
+
+#ifdef CONFIG_GR_SENSOR
+static const struct device * gr_sensor = DEVICE_DT_GET(DT_NODELABEL(gr_sensor0));
+#endif
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
-namespace {
-    void test() {
-        const struct device * driver = DEVICE_DT_GET(DT_NODELABEL(gr_sensor0));
-        struct sensor_value val;
-        auto ret = sensor_channel_get(driver, SENSOR_CHAN_AMBIENT_TEMP, &val);
-        LOG_INF("Channel ret %d", ret);
-    }
-}
-
 int main(void)
 {
-    test();
+#ifndef CONFIG_GR_SENSOR
     bool led_state = true;
 
     if (!gpio_is_ready_dt(&led)) return 0;
@@ -37,5 +31,18 @@ int main(void)
         LOG_INF("LED state: %s", led_state ? "ON" : "OFF");
         k_msleep(CONFIG_APP_HEARTBEAT_PERIOD_MS);
     }
+#else
+    bool state = true;
+    while (1) {
+        struct sensor_value val;
+        if(state) {
+            auto ret = sensor_channel_get(gr_sensor, SENSOR_CHAN_AMBIENT_TEMP, &val);
+        } else {
+            auto ret = sensor_sample_fetch(gr_sensor);
+        }
+        state = !state;
+        k_msleep(CONFIG_APP_HEARTBEAT_PERIOD_MS);
+    }
+#endif
     return 0;
 }

@@ -25,14 +25,14 @@ void gr_sensor_set_amp(const struct device *dev, uint32_t amp) {
 
 int sample_fetch_gr_sensor(const struct device *dev, enum sensor_channel chan) 
 {
-#ifdef CONFIG_SHELL
+#ifndef CONFIG_SHELL
     // To avoid overkill with the logs
     LOG_INF("Sample Fetch reached, channel %d", chan);
 #endif
 
     if (gpio_pin_set_dt(&led, 1) != 0) return 0;
     led_state = true;
-#ifdef CONFIG_SHELL
+#ifndef CONFIG_SHELL
     // To avoid overkill with the logs
     LOG_INF("LED state: %s", led_state ? "ON" : "OFF");
 #endif
@@ -44,14 +44,14 @@ int channel_get_gr_sensor(const struct device *dev,
 				    enum sensor_channel chan,
 				    struct sensor_value *val) 
 {
-#ifdef CONFIG_SHELL
+#ifndef CONFIG_SHELL
     // To avoid overkill with the logs
     LOG_INF("Channel Get reached, channel %d, amp %d", chan, ((gr_sensor_data_t *)dev->data)->amp);
 #endif
     
     if (gpio_pin_set_dt(&led, 0) != 0) return 0;
     led_state = false;
-#ifdef CONFIG_SHELL
+#ifndef CONFIG_SHELL
     // To avoid overkill with the logs
     LOG_INF("LED state: %s", led_state ? "ON" : "OFF");
 #endif

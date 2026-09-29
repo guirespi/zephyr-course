@@ -43,7 +43,6 @@ int main(void)
         } else {
             auto ret = sensor_sample_fetch(gr_sensor);
         }
-        gr_sensor_set_amp(gr_sensor, counter++);
         state = !state;
         k_msleep(CONFIG_APP_HEARTBEAT_PERIOD_MS);
     }

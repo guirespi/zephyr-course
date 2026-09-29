@@ -1,3 +1,6 @@
 if(CONFIG_GR_SENSOR)
     target_sources(app PRIVATE gr_sensor.c)
+    if(CONFIG_SHELL)
+        target_sources(app PRIVATE gr_sensor_shell.c)
+    endif()
 endif()

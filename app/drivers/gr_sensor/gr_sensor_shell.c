@@ -1,5 +1,6 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/drivers/sensor.h>
+#include <limits.h>
 #include "gr_sensor.h"
 
 static const struct device * gr_sensor = DEVICE_DT_GET(DT_NODELABEL(gr_sensor0));
@@ -30,13 +31,18 @@ static int cmd_demo_write(const struct shell * sh, size_t argc, char **argv) {
     char *endptr;
     errno = 0;
     long val = strtol(argv[1], &endptr, 10);
-
+    
     if (endptr == argv[1] || *endptr != '\0') {
         shell_error(sh, "Invalid integer: %s", argv[1]);
         return -EINVAL;
     }
 
     if (errno == ERANGE) {
+        shell_error(sh, "Value out of range: %s", argv[1]);
+        return -ERANGE;
+    }
+
+    if (val < INT_MIN || val > INT_MAX) {
         shell_error(sh, "Value out of range: %s", argv[1]);
         return -ERANGE;
     }
